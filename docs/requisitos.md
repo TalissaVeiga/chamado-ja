@@ -51,3 +51,28 @@ O sistema deverá:
 - RNF05 - O projeto deverá possuir documentação de instalação.
 - RNF06 - A API deverá possuir documentação dos endpoints.
 - RNF07 - As decisões técnicas do projeto deverão ser documentadas.
+
+## 6. Regras iniciais de prioridade e status: 
+
+O ChamadoJá terá três tipos de prioridades: Baixa, Média e Alta. 
+
+A prioridade deverá ser definida pelo solicitante no ato do registro do chamado.
+
+O ChamadoJá terá três tipos de status: Pendente de Atendimento, Em Atendimento, Cancelado e Resolvido. 
+
+## 7. Limites do escopo: 
+
+- Cadastrar e consultar usuários;
+- Cadastrar e consultar categorias;
+- Registrar chamados e sua prioridade;
+- Atualizar chamados;
+- Filtrar e paginar chamados;
+- Abrir e conultar chamados e seu histórico;
+- Alterar status;
+- Guardar histórico de status;
+- Adicionar comentários;
+- Fornecer o resumo da quantidade de chamados já registrados; 
+
+## 8. Dúvidas e hipóteses da equipe:
+
+Se a prioridade do chamado é definida pelo solicitante haverá um problema de fluxo pelo fato de que alguns solicitantes terão a possibilidade de colocar prioridade Alta em todos os chamados para que tentem ser atendidos com mais agilidade, e a depender da quantidade de atendentes disponíveis isso poderia causar um fluxo muito grande de chamados de alta prioridade. Então uma solução seria trocar a definição do solicitante para que o atendente realizasse a classificação da prioridade, porém isso geraria mais uma função pro atendente, que seria a de triagem dos chamados antes de poder começar a resolvê-los e isso resultaria em deixar a resolução dos chamados mais lenta. A não ser que fosse implementado uma terceira pessoa além do solicitante e o atendente, alguém responsável só pela triagem. Assim o atendente só abriria e resolveria os chamados pelo nível de prioridade e isso tornaria o sistema de atendimento mais ágil para o solicitante. 
