@@ -6,7 +6,7 @@ CREATE TABLE usuarios (
 
 CREATE TABLE categorias (
     id BIGSERIAL PRIMARY KEY, 
-    nome VARCHAR(20)
+    nome VARCHAR(100)
 );
 
 CREATE TABLE chamados (
@@ -38,7 +38,8 @@ CREATE TABLE historico_status (
     id BIGSERIAL PRIMARY KEY,
     chamado_id BIGINT NOT NULL REFERENCES chamados (id),
     usuario_id BIGINT NOT NULL REFERENCES usuarios (id),
-    status VARCHAR(30) NOT NULL
+    status VARCHAR(30) NOT NULL,
+    alterado_em TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE comentarios (
