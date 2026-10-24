@@ -72,3 +72,97 @@ Se estiver tudo funcionando, será exibida uma resposta em JSON indicando que a 
 ## Situação atual
 
 O projeto está em desenvolvimento. Nesta etapa, o foco é organizar a estrutura do Laravel, conectar o PostgreSQL e configurar os modelos e relacionamentos necessários para o gerenciamento dos chamados.
+
+## Endpoints da API
+
+A API permite cadastrar e consultar usuários e categorias, além de abrir, consultar e atualizar chamados.
+
+A URL base para os testes locais é:
+
+`http://127.0.0.1:8000/api`
+
+### Usuários
+
+| Método | Rota | Descrição |
+|---|---|---|
+| GET | `/usuarios` | Lista os usuários cadastrados. |
+| POST | `/usuarios` | Cadastra um usuário. |
+
+Exemplo de cadastro (`POST /usuarios`):
+
+```json
+{
+  "nome": "Teste Semana 4",
+  "telefone": "51988887777"
+}
+```
+
+Resposta esperada: `201 Created`, com os dados do usuário cadastrado.
+
+### Categorias
+
+| Método | Rota | Descrição |
+|---|---|---|
+| GET | `/categorias` | Lista as categorias cadastradas. |
+| POST | `/categorias` | Cadastra uma categoria. |
+
+Exemplo de cadastro (`POST /categorias`):
+
+```json
+{
+  "nome": "Impressora"
+}
+```
+
+Resposta esperada: `201 Created`, com os dados da categoria cadastrada.
+
+### Chamados
+
+| Método | Rota | Descrição |
+|---|---|---|
+| GET | `/chamados` | Lista os chamados com seus relacionamentos. |
+| POST | `/chamados` | Abre um chamado. |
+| GET | `/chamados/{id}` | Consulta um chamado pelo ID. |
+| PATCH | `/chamados/{id}` | Atualiza os dados permitidos de um chamado. |
+
+Exemplo de abertura (`POST /chamados`):
+
+```json
+{
+  "solicitante_id": 10,
+  "categoria_id": 5,
+  "titulo": "Monitor com defeito",
+  "descricao": "O monitor não liga quando pressiono o botão.",
+  "prioridade": "Alta"
+}
+```
+
+O status inicial é definido pela API como `Pendente de Atendimento`, sem precisar ser enviado na requisição.
+
+Resposta esperada: `201 Created`, com os dados do chamado.
+
+Exemplo de atualização (`PATCH /chamados/9`):
+
+```json
+{
+  "titulo": "Monitor com defeito"
+}
+```
+
+Resposta esperada: `200 OK`, com os dados atualizados.
+
+### Validações e erros
+
+- Campos obrigatórios ausentes ou dados inválidos retornam `422 Unprocessable Content`.
+- A criação de chamado com uma categoria inexistente é rejeitada pela validação.
+- A consulta ou atualização de um chamado inexistente retorna `404 Not Found`.
+
+### Teste da API
+
+Antes de realizar os testes, inicie o servidor:
+
+```bash
+php artisan serve
+```
+
+Os endpoints podem ser testados pelo Postman, usando os métodos HTTP e exemplos apresentados nesta seção.
