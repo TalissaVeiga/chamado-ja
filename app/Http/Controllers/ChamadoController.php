@@ -9,11 +9,38 @@ use Illuminate\Validation\Rule;
 
 class ChamadoController extends Controller
 {
+    private function formatarChamado(Chamado $chamado): array
+    {
+        $chamado->load([
+            'solicitante:id,nome,telefone',
+            'categoria:id,nome',
+        ]);
+
+        return [
+            'id' => $chamado->id,
+            'solicitante_id' => $chamado->solicitante_id,
+            'categoria_id' => $chamado->categoria_id,
+            'titulo' => $chamado->titulo,
+            'descricao' => $chamado->descricao,
+            'prioridade' => $chamado->prioridade,
+            'status' => $chamado->status,
+            'created_at' => $chamado->created_at,
+            'updated_at' => $chamado->updated_at,
+            'solicitante' => $chamado->solicitante,
+            'categoria' => $chamado->categoria,
+        ];
+    }
+
     public function index(): JsonResponse
     {
-        $chamados = Chamado::with(['solicitante', 'categoria'])->get();
+        $chamados = Chamado::with([
+            'solicitante:id,nome,telefone',
+            'categoria:id,nome',
+        ])->get();
 
-        return response()->json($chamados);
+        return response()->json(
+            $chamados->map(fn (Chamado $chamado) => $this->formatarChamado($chamado))
+        );
     }
 
     public function store(Request $request): JsonResponse
@@ -52,15 +79,14 @@ class ChamadoController extends Controller
         ]);
 
         return response()->json(
-            $chamado->load(['solicitante', 'categoria']),
+            $this->formatarChamado($chamado),
             201
         );
     }
 
     public function show(int $id): JsonResponse
     {
-        $chamado = Chamado::with(['solicitante', 'categoria'])
-            ->find($id);
+        $chamado = Chamado::find($id);
 
         if (!$chamado) {
             return response()->json([
@@ -68,7 +94,7 @@ class ChamadoController extends Controller
             ], 404);
         }
 
-        return response()->json($chamado);
+        return response()->json($this->formatarChamado($chamado));
     }
 
     public function update(Request $request, int $id): JsonResponse
@@ -116,8 +142,6 @@ class ChamadoController extends Controller
 
         $chamado->update($dados);
 
-        return response()->json(
-            $chamado->load(['solicitante', 'categoria'])
-        );
+        return response()->json($this->formatarChamado($chamado));
     }
 }

@@ -10,7 +10,9 @@ class CategoriaController extends Controller
 {
     public function index(): JsonResponse
     {
-        $categorias = Categoria::all();
+        $categorias = Categoria::query()
+            ->select(['id', 'nome'])
+            ->get();
 
         return response()->json($categorias);
     }
@@ -23,6 +25,9 @@ class CategoriaController extends Controller
 
         $categoria = Categoria::create($dados);
 
-        return response()->json($categoria, 201);
+        return response()->json([
+            'id' => $categoria->id,
+            'nome' => $categoria->nome,
+        ], 201);
     }
 }
