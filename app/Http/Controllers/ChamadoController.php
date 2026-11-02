@@ -24,24 +24,71 @@ class ChamadoController extends Controller
             'descricao' => $chamado->descricao,
             'prioridade' => $chamado->prioridade,
             'status' => $chamado->status,
-            'created_at' => $chamado->created_at,
-            'updated_at' => $chamado->updated_at,
+            'criado_em' => $chamado->criado_em,
+            'atualizado_em' => $chamado->atualizado_em,
             'solicitante' => $chamado->solicitante,
             'categoria' => $chamado->categoria,
         ];
     }
 
-    public function index(): JsonResponse
-    {
-        $chamados = Chamado::with([
-            'solicitante:id,nome,telefone',
-            'categoria:id,nome',
-        ])->get();
+  public function index(Request $request): JsonResponse
+{
+   $request->validate([
+    'data_inicio' => [
+        'sometimes',
+        'required',
+        'date',
+    ],
+    'data_fim' => [
+        'sometimes',
+        'required',
+        'date',
+        'after_or_equal:data_inicio',
+    ],
+    ]);
+    $consulta = Chamado::query()->with([
+        'solicitante:id,nome,telefone',
+        'categoria:id,nome',
+    ]);
 
-        return response()->json(
-            $chamados->map(fn (Chamado $chamado) => $this->formatarChamado($chamado))
-        );
-    }
+    $consulta->when($request->status, function ($consulta, $status) {
+        $consulta->where('status', $status);
+    });
+
+    $consulta->when($request->prioridade, function ($consulta, $prioridade) {
+        $consulta->where('prioridade', $prioridade);
+    });
+
+    $consulta->when($request->categoria_id, function ($consulta, $categoriaId) {
+        $consulta->where('categoria_id', $categoriaId);
+    });
+
+    $consulta->when($request->solicitante_id, function ($consulta, $solicitanteId) {
+        $consulta->where('solicitante_id', $solicitanteId);
+    });
+    $consulta->when($request->data_inicio, function ($consulta, $dataInicio) {
+    $consulta->whereDate('criado_em', '>=', $dataInicio);
+    });
+    $consulta->when($request->data_fim, function ($consulta, $dataFim) {
+    $consulta->whereDate('criado_em', '<=', $dataFim);
+    });
+
+    $ordenacoesPermitidas = ['criado_em', 'prioridade', 'status'];
+
+    $ordenacao = in_array($request->ordenar_por, $ordenacoesPermitidas, true)
+        ? $request->ordenar_por
+        : 'criado_em';
+
+    $chamados = $consulta
+        ->orderByDesc($ordenacao)
+        ->paginate(15);
+
+    $chamados->getCollection()->transform(
+        fn (Chamado $chamado) => $this->formatarChamado($chamado)
+    );
+
+    return response()->json($chamados);
+}
 
     public function store(Request $request): JsonResponse
     {
