@@ -137,7 +137,7 @@ class ChamadoController extends Controller
 
         if (!$chamado) {
             return response()->json([
-                'mensagem' => 'Chamado não encontrado.',
+                'message' => 'Chamado não encontrado.',
             ], 404);
         }
 
